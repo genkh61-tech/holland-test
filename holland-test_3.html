@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Холланд Карьерын Тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mongolian&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --r: #0F6E56; --r-bg: #E1F5EE; --r-mid: #1D9E75;
+    --i: #185FA5; --i-bg: #E6F1FB; --i-mid: #378ADD;
+    --a: #993556; --a-bg: #FBEAF0; --a-mid: #D4537E;
+    --s: #534AB7; --s-bg: #EEEDFE; --s-mid: #7F77DD;
+    --e: #854F0B; --e-bg: #FAEEDA; --e-mid: #BA7517;
+    --c: #444441; --c-bg: #F1EFE8; --c-mid: #888780;
+    --text: #1a1a1a;
+    --text2: #555;
+    --border: #e0ddd8;
+    --bg: #fafaf8;
+    --white: #ffffff;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Mongolian', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    text-align: center;
+    padding: 2.5rem 1.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px; right: -40px; bottom: -20px;
+    background: radial-gradient(ellipse at 30% 50%, rgba(83,74,183,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(24,95,165,0.25) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .hero p {
+    font-size: 14px;
+    opacity: 0.75;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+  }
+  .hero-dots {
+    display: flex; gap: 8px; justify-content: center; margin-top: 1.5rem;
+    position: relative;
+  }
+  .hero-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    opacity: 0.7;
+  }
+
+  .progress-wrap {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 1.25rem;
+  }
+  .progress-info {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--text2); margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 5px; background: #eee; border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #534AB7, #185FA5);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .main { max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem; }
+
+  .section {
+    margin-bottom: 1.75rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .sec-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+  }
+  .sec-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; flex-shrink: 0;
+  }
+  .sec-info h2 { font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .sec-info p { font-size: 11px; opacity: 0.65; margin-top: 1px; }
+
+  .q-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 16px;
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .q-row.answered { background: #fafff8; }
+  .q-num {
+    font-size: 11px; color: #aaa; min-width: 16px;
+    font-weight: 500;
+  }
+  .q-text {
+    font-size: 13px; color: var(--text); flex: 1;
+    line-height: 1.5;
+  }
+  .stars {
+    display: flex; gap: 3px; flex-shrink: 0;
+  }
+  .star-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    font-size: 12px; font-weight: 600;
+    color: #aaa;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .star-btn:active { transform: scale(0.9); }
+  .star-btn.on {
+    color: white;
+    border-color: transparent;
+  }
+
+  .submit-wrap { padding: 0 1rem; }
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 0.5rem;
+  }
+  .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .submit-btn:not(:disabled):active { transform: scale(0.98); }
+  .warn-text {
+    text-align: center; font-size: 12px;
+    color: #c0392b; margin-top: 8px;
+    display: none;
+  }
+
+  /* Results */
+  #result-section { display: none; max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem; }
+
+  .result-hero {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: white;
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .result-hero p { font-size: 13px; opacity: 0.65; margin-bottom: 8px; }
+  .holland-code {
+    font-size: 52px; font-weight: 700;
+    letter-spacing: 8px;
+    font-feature-settings: "tnum";
+  }
+  .code-labels {
+    display: flex; justify-content: center; gap: 16px;
+    margin-top: 10px; flex-wrap: wrap;
+  }
+  .code-label {
+    font-size: 11px; opacity: 0.7;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .code-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .bars-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .bar-row {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-code {
+    font-size: 20px; font-weight: 700;
+    min-width: 24px; text-align: center;
+  }
+  .bar-info { flex: 1; }
+  .bar-label {
+    font-size: 12px; font-weight: 500; color: var(--text);
+    margin-bottom: 5px; display: flex; justify-content: space-between;
+  }
+  .bar-track {
+    height: 8px; background: #eee; border-radius: 4px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .rank-pill {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 99px;
+    flex-shrink: 0;
+  }
+
+  .restart-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--white);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .restart-btn:hover { background: var(--bg); }
+
+  .interp-card {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: white;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .interp-card h3 { font-size: 13px; opacity: 0.6; margin-bottom: 6px; font-weight: 400; }
+  .interp-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+  .interp-desc { font-size: 13px; opacity: 0.8; line-height: 1.7; margin-bottom: 1rem; }
+  .career-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .career-tag {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 99px;
+    padding: 5px 12px;
+    font-size: 12px; font-weight: 500;
+  }
+  .no-match {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+  }
+  .print-btn {
+    width: 100%;
+    padding: 13px;
+    background: #1a1a2e;
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .ai-loading {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    color: white; font-size: 14px; margin-bottom: 1.25rem;
+  }
+  .ai-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-badge {
+    font-size: 11px; font-weight: 600; opacity: 0.6;
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .interp-code-big {
+    font-size: 42px; font-weight: 700; letter-spacing: 6px;
+    margin-bottom: 16px; color: white;
+  }
+  .interp-ai-text {
+    font-size: 13.5px; line-height: 1.8; color: rgba(255,255,255,0.88);
+    white-space: pre-line;
+  }
+  .interp-ai-text strong { color: white; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🎯 Холланд Карьерын Тест</h1>
+  <p>Хариултаа 1–5 оноогоор үнэлнэ үү<br>1 = огт тохирохгүй · 5 = маш тохирно</p>
+  <div class="hero-dots">
+    <div class="hero-dot" style="background:#9FE1CB"></div>
+    <div class="hero-dot" style="background:#85B7EB"></div>
+    <div class="hero-dot" style="background:#ED93B1"></div>
+    <div class="hero-dot" style="background:#AFA9EC"></div>
+    <div class="hero-dot" style="background:#FAC775"></div>
+    <div class="hero-dot" style="background:#B4B2A9"></div>
+  </div>
+</div>
+
+<div class="progress-wrap" id="prog-wrap">
+  <div class="progress-info">
+    <span id="prog-text">0 / 42 асуулт</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="main" id="test-section">
+  <div id="q-container"></div>
+  <div class="submit-wrap">
+    <p class="warn-text" id="warn">⚠ Бүх 42 асуултад хариулна уу</p>
+    <button class="submit-btn" id="sub-btn" onclick="submit()">Үр дүн харах →</button>
+  </div>
+</div>
+
+<div id="result-section">
+  <div class="result-hero">
+    <p>Таны Холланд Код</p>
+    <div class="holland-code" id="h-code">—</div>
+    <div class="code-labels" id="code-labels"></div>
+  </div>
+  <div id="interp-wrap"></div>
+  <div class="bars-section" id="bars"></div>
+  <button class="print-btn" onclick="window.print()">🖨️ Хэвлэх</button>
+  <button class="restart-btn" onclick="restart()">↺ Дахин оруулах</button>
+</div>
+
+<script>
+const S = [
+  { code:'R', name:'Бодит', en:'Realistic', color:'#0F6E56', bg:'#E1F5EE', mid:'#1D9E75',
+    q:['Техник механик зүйлсийг засах, угсрахыг сонирхдог','Гараар хийдэг ажил (модон эдлэл, урлаг гар урлал) таалагддаг','Спорт, биеийн тамир, гадаа байх дуртай','Машин, хөдөлгүүр, техник тоног төхөөрөмж сонирхдог','Хөдөлмөрийн гарын авлага, техникийн заавар уншихад таалагддаг','Байгаль дахь ажил (тариалан, мал аж ахуй) сонирхдог','Барилга, засвар үйлчилгээний ажил хийж чаддаг']
+  },
+  { code:'I', name:'Судалгааны', en:'Investigative', color:'#185FA5', bg:'#E6F1FB', mid:'#378ADD',
+    q:['Математик, физик, хими зэрэг шинжлэх ухааны хичээл сонирхдог','Нарийн асуудлуудыг шинжлэн судлахад цаг зарцуулж болно','Интернэт, ном, тайлангаас шинэ зүйл сурахыг дуртай','Нотлох баримтад суурилсан дүгнэлт гаргахыг чухалчилдаг','Компьютер, программ, мэдээллийн технологийг сонирхдог','Туршилт явуулах, шинэ зүйл нээхэд сонирхолтой','Асуудлыг шийдэхийн тулд гүнзгий судалгаа хийдэг']
+  },
+  { code:'A', name:'Уран бүтээлч', en:'Artistic', color:'#993556', bg:'#FBEAF0', mid:'#D4537E',
+    q:['Дүрслэх урлаг, зургаа зурах, бүтээх дуртай','Хөгжим тоглох, дуулах, хөгжмийн зохиол бичих сонирхолтой','Зохиол, яруу найраг, эссе бичихэд авьяастай','Кино, театр, жүжигт сонирхолтой','Фото зургийн урлаг, видео бүтээх таалагддаг','График дизайн, веб дизайн, интерфейс зохиомжлох сонирхолтой','Орчинд гоо зүйн гоёмсог байдал чухал гэж үздэг']
+  },
+  { code:'S', name:'Нийгмийн', en:'Social', color:'#534AB7', bg:'#EEEDFE', mid:'#7F77DD',
+    q:['Найз нөхөдтэй, гэр бүлтэй цаг зарцуулахыг таалагддаг','Бусдад тусалж, зөвлөгөө өгөхийг дуртай','Хүүхэд ба залуустай ажиллах, заах сонирхолтой','Багийн ажил, хамтран ажиллах орчинд амжилттай','Нийгмийн асуудалд анхааралтай, тусалмаар гэж хүсдэг','Сайн сонсогч, бусдын асуудлыг ойлгодог','Олны өмнө илтгэл тавих, хэлэлцүүлэг хийхийг дуртай']
+  },
+  { code:'E', name:'Бизнесийн', en:'Enterprising', color:'#854F0B', bg:'#FAEEDA', mid:'#BA7517',
+    q:['Бусдыг удирдах, манлайлах дуртай','Шинэ бизнес санаа, төсөл боловсруулахад сонирхолтой','Ятгах, итгүүлэх, нөлөөлөх чадвар сайн','Хурал, хэлэлцээрт идэвхтэй оролцдог','Эрсдэл авах, шинэ зүйл туршихаас айдаггүй','Ялах, амжилтанд хүрэхэд чиглэлтэй','Борлуулалт, маркетинг, PR-ийн ажилд сонирхолтой']
+  },
+  { code:'C', name:'Дэг журмын', en:'Conventional', color:'#3C3C3A', bg:'#F1EFE8', mid:'#888780',
+    q:['Дэг журам, цэгц байдаг орчинд ажиллахыг таалагддаг','Бүртгэл хяналт, нягтлан бодох бүртгэл сонирхдог','Тооцоо, санхүүгийн тайлан гаргах чадвар сайн','Дүрэм журам, журмыг дагаж мөрдөх чухал гэж үздэг','Нарийн ширийн зүйлд анхааралтай, алдаа гаргахгүй байхыг чухалчилдаг','Компьютерийн хүснэгт, тайлан бүртгэлтэй ажиллахад таатай','Тогтмол дэг журмаар ажиллах орчин тохиромжтой']
+  }
+];
+
+const CODES = {
+  'IAS': { title:'Судалгааны + Уран бүтээлч + Нийгмийн', desc:'Та шинжлэх ухаан, бүтээлч сэтгэлгээ, хүнтэй ажиллахыг хослуулдаг. Нарийн асуудлыг судалж шийдвэрлэхийн зэрэгцээ хүмүүсийн сайн сайхан байдалд санаа тавьдаг.', careers:['Сэтгэл зүйч','Эмч','Сурган хүмүүжүүлэгч','Нийгмийн судлаач','Хүүхдийн хөгжлийн мэргэжилтэн'] },
+  'RIC': { title:'Бодит + Судалгааны + Дэг журмын', desc:'Та техник, шинжлэх ухаан, системчилсэн сэтгэлгээг хослуулдаг. Практик асуудлыг шинжлэн судалж, тогтолцоотой шийдвэрлэхэд чадварлаг.', careers:['Инженер','Программист','Биотехнологич','Системийн шинжээч','Мэдээллийн технологийн мэргэжилтэн'] },
+  'ECS': { title:'Бизнесийн + Дэг журмын + Нийгмийн', desc:'Та удирдах чадвар, тогтолцоо, хүмүүстэй харилцах ур чадварыг хослуулдаг. Байгууллагын үйл ажиллагааг зохион байгуулж, багийг удирдахад авьяастай.', careers:['Менежер','Захиргааны удирдлага','Хүний нөөцийн мэргэжилтэн','Бизнесийн зөвлөх','Төслийн менежер'] },
+  'ASI': { title:'Уран бүтээлч + Нийгмийн + Судалгааны', desc:'Та бүтээлч сэтгэлгээ, нийгмийн мэдрэмж, аналитик ур чадварыг хослуулдаг. Хүмүүст нөлөөлж, шинэ санаагаар дэлхийг тайлбарлахыг эрмэлздэг.', careers:['Сэтгүүлч','Архитектор','Нийгмийн судлаач','Маркетингийн мэргэжилтэн','Дизайнер'] },
+  'SEC': { title:'Нийгмийн + Бизнесийн + Дэг журмын', desc:'Та хүмүүст тусалж, тэднийг хөгжүүлэхийг эрмэлздэг бөгөөд байгууллагыг тогтолцоотой удирдах чадвартай. Боловсрол болон нийгмийн салбарт хүч чадлаа харуулдаг.', careers:['Боловсролын удирдлага','Нийгмийн ажилтан','Сургалтын мэргэжилтэн','Хүүхдийн хамгаалал','Олон нийтийн ажилтан'] },
+  'CRE': { title:'Дэг журмын + Бодит + Бизнесийн', desc:'Та тоо, систем, практик ажилд суурилсан бизнесийн орчинд хамгийн сайн ажилладаг. Нарийвчлал, үнэн зөвийг чухалчилдаг.', careers:['Нягтлан бодогч','Санхүүгийн шинжээч','Аудитор','Татварын мэргэжилтэн','Эдийн засагч'] },
+};
+
+function findInterp(code) {
+  if (CODES[code]) return CODES[code];
+  const c = code.split('');
+  const perms = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+  for(const p of perms) {
+    const k = c[p[0]]+c[p[1]]+c[p[2]];
+    if(CODES[k]) return CODES[k];
+  }
+  return null;
+}
+
+const ans = {};
+let done = 0;
+
+function build() {
+  const c = document.getElementById('q-container');
+  S.forEach((sec, si) => {
+    const d = document.createElement('div');
+    d.className = 'section';
+    d.innerHTML = `<div class="sec-header" style="background:${sec.bg}">
+      <div class="sec-icon" style="background:${sec.mid};color:white">${sec.code}</div>
+      <div class="sec-info">
+        <h2 style="color:${sec.color}">${sec.code} — ${sec.name}</h2>
+        <p>${sec.en}</p>
+      </div>
+    </div>`;
+    sec.q.forEach((q, qi) => {
+      const key = `${si}-${qi}`;
+      const row = document.createElement('div');
+      row.className = 'q-row';
+      row.id = 'row-' + key;
+      row.innerHTML = `<span class="q-num">${qi+1}</span>
+        <span class="q-text">${q}</span>
+        <div class="stars">
+          ${[1,2,3,4,5].map(v =>
+            `<button class="star-btn" id="s-${key}-${v}" onclick="pick('${key}',${v},'${sec.mid}')">${v}</button>`
+          ).join('')}
+        </div>`;
+      d.appendChild(row);
+    });
+    c.appendChild(d);
+  });
+}
+
+function pick(key, val, mid) {
+  const was = ans[key] !== undefined;
+  ans[key] = val;
+  [1,2,3,4,5].forEach(v => {
+    const b = document.getElementById(`s-${key}-${v}`);
+    if (v <= val) { b.classList.add('on'); b.style.background = mid; }
+    else { b.classList.remove('on'); b.style.background = ''; }
+  });
+  const row = document.getElementById('row-' + key);
+  row.classList.add('answered');
+  if (!was) { done++; upd(); }
+}
+
+function upd() {
+  const p = Math.round(done/42*100);
+  document.getElementById('prog-fill').style.width = p + '%';
+  document.getElementById('prog-text').textContent = done + ' / 42 асуулт';
+  document.getElementById('prog-pct').textContent = p + '%';
+}
+
+function submit() {
+  if (Object.keys(ans).length < 42) {
+    const w = document.getElementById('warn'); w.style.display = 'block';
+    w.scrollIntoView({behavior:'smooth',block:'center'}); return;
+  }
+  const scores = S.map((sec, si) => ({
+    ...sec, total: sec.q.reduce((s,_,qi) => s + (ans[`${si}-${qi}`]||0), 0)
+  })).sort((a,b) => b.total - a.total);
+
+  document.getElementById('test-section').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'none';
+  const rs = document.getElementById('result-section');
+  rs.style.display = 'block';
+
+  document.getElementById('h-code').textContent = scores.slice(0,3).map(s=>s.code).join('');
+  document.getElementById('code-labels').innerHTML = scores.slice(0,3).map(s =>
+    `<div class="code-label"><div class="code-dot" style="background:${s.mid}"></div>${s.name}</div>`
+  ).join('');
+
+  const topCode = scores.slice(0,3).map(s=>s.code).join('');
+  const iw = document.getElementById('interp-wrap');
+  iw.innerHTML = `<div class="ai-loading">
+    <div class="ai-spinner"></div>
+    <span>AI таны кодыг шинжилж байна...</span>
+  </div>`;
+  
+  // Build score summary for AI
+  const scoreSummary = scores.map(s => `${s.code} (${s.name}): ${s.total}/35`).join(', ');
+  
+  fetchAIInterpretation(topCode, scoreSummary).then(result => {
+    iw.innerHTML = `<div class="interp-card">
+      <div class="ai-badge">✦ AI тайлбар</div>
+      <div class="interp-code-big">${topCode}</div>
+      <div class="interp-ai-text">${result.replace(/\n/g, '<br>')}</div>
+    </div>`;
+  }).catch(() => {
+    iw.innerHTML = `<div class="interp-card">
+      <div class="ai-badge">✦ Таны код</div>
+      <div class="interp-code-big">${topCode}</div>
+      <div class="interp-ai-text">Таны хослол бол <strong>${topCode}</strong> — ${scores.slice(0,3).map(s=>s.name).join(', ')} төрлүүдийн нэгдэл. Эдгээр шинж чанаруудыг хослуулсан мэргэжил сонголт хийвэл хамгийн их амжилтад хүрэх боломжтой.</div>
+    </div>`;
+  });
+
+  const bars = document.getElementById('bars');
+  bars.innerHTML = '';
+  scores.forEach((s, i) => {
+    const pct = Math.round(s.total/35*100);
+    const rankLabels = ['🥇 1-р байр','🥈 2-р байр','🥉 3-р байр'];
+    const d = document.createElement('div');
+    d.className = 'bar-row';
+    d.innerHTML = `
+      <div class="bar-code" style="color:${s.color}">${s.code}</div>
+      <div class="bar-info">
+        <div class="bar-label">
+          <span>${s.name} (${s.en})</span>
+          <span style="color:${s.color};font-weight:600">${s.total}/35</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" id="bf-${i}" style="width:0%;background:${s.mid}"></div>
+        </div>
+      </div>
+      ${i < 3 ? `<div class="rank-pill" style="background:${s.bg};color:${s.color}">${rankLabels[i]}</div>` : ''}
+    `;
+    bars.appendChild(d);
+    setTimeout(() => { document.getElementById('bf-'+i).style.width = pct+'%'; }, 100 + i*80);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restart() {
+  Object.keys(ans).forEach(k => delete ans[k]);
+  done = 0; upd();
+  document.querySelectorAll('.star-btn').forEach(b => { b.classList.remove('on'); b.style.background=''; });
+  document.querySelectorAll('.q-row').forEach(r => r.classList.remove('answered'));
+  document.getElementById('warn').style.display = 'none';
+  document.getElementById('interp-wrap').innerHTML = '';
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('test-section').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function fetchAIInterpretation(code, scores) {
+  const codeNames = {R:'Бодит (Realistic)',I:'Судалгааны (Investigative)',A:'Уран бүтээлч (Artistic)',S:'Нийгмийн (Social)',E:'Бизнесийн (Enterprising)',C:'Дэг журмын (Conventional)'};
+  const codeDesc = code.split('').map(c => codeNames[c]).join(', ');
+  
+  const prompt = `Та карьерын зөвлөгч. Хүүхэд сурагчийн Холланд тестийн үр дүн:
+
+Холланд Код: ${code}
+Дэлгэрэнгүй оноо: ${scores}
+Кодын тайлбар: ${codeDesc}
+
+Монгол хэлээр дараах бүтцээр богино, ойлгомжтой тайлбар бич (нийт 150-200 үг):
+
+🎯 ТАНЫ ХОЛЛАНД КОД: ${code}
+[2-3 өгүүлбэрээр энэ хослолын утгыг тайлбарла]
+
+💡 ТАНЫ ОНЦ ШИНЖ:
+[3-4 товч давуу тал]
+
+🎓 САНАЛ БОЛГОХ МЭРГЭЖИЛ:
+[5-6 тохирох мэргэжил, товч тайлбартай]
+
+📚 СУРАЛЦАХ ЧИГЛЭЛ:
+[3-4 их сургуулийн мэргэжил]`;
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await resp.json();
+  return data.content[0].text;
+}
+
+build();
+</script>
+</body>
+</html>
