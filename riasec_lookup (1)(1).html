@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIASEC Код Тайлбар</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #f0f4ff; min-height: 100vh; padding: 20px; }
+.container { max-width: 480px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; color: #1a2744; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
+.input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 24px; }
+#codeInput {
+  width: 140px; font-size: 32px; font-weight: 700; text-transform: uppercase;
+  text-align: center; letter-spacing: 10px; padding: 10px;
+  border: 2px solid #c0c8e8; border-radius: 12px; background: #fff;
+  color: #1a2744; outline: none;
+}
+#codeInput:focus { border-color: #3b5bdb; }
+.clear-btn {
+  padding: 10px 16px; background: #fff; border: 1.5px solid #c0c8e8;
+  border-radius: 10px; font-size: 14px; color: #555; cursor: pointer;
+}
+.clear-btn:hover { background: #f0f4ff; }
+.result-card {
+  background: #1a2744; border-radius: 16px; padding: 20px; margin-bottom: 16px; color: #fff;
+}
+.result-label { font-size: 12px; color: #8899bb; margin-bottom: 4px; }
+.result-code { font-size: 48px; font-weight: 700; letter-spacing: 10px; margin-bottom: 6px; }
+.result-names { font-size: 14px; color: #aabbd4; margin-bottom: 12px; }
+.result-summary { font-size: 15px; color: #d0dff0; line-height: 1.6; }
+.letter-card {
+  background: #fff; border: 1px solid #e0e6f0; border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start;
+}
+.letter-badge {
+  min-width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700;
+}
+.letter-card-right { flex: 1; }
+.letter-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.letter-name { font-size: 14px; font-weight: 600; color: #1a2744; }
+.rank-badge {
+  font-size: 11px; background: #f0f4ff; color: #5566aa;
+  padding: 2px 8px; border-radius: 99px; border: 1px solid #c0c8e8;
+}
+.letter-desc { font-size: 13px; color: #555; line-height: 1.5; }
+.careers-section { margin-top: 14px; }
+.careers-label { font-size: 13px; color: #666; margin-bottom: 8px; }
+.careers-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.career-tag {
+  font-size: 13px; background: #f0f4ff; color: #3b5bdb;
+  padding: 4px 12px; border-radius: 99px; border: 1px solid #c0c8e8;
+}
+.error { color: #c0392b; font-size: 14px; margin-top: 8px; padding: 10px; background: #fdecea; border-radius: 10px; }
+.hidden { display: none; }
+.header-icon { font-size: 28px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header-icon">🎯</div>
+  <h1>Холланд Карьерын Тест</h1>
+  <p class="subtitle">3 үсгийн кодоо оруулаад тайлбараа аваарай</p>
+
+  <div class="input-row">
+    <input type="text" id="codeInput" maxlength="3" placeholder="CIE"
+      oninput="this.value=this.value.toUpperCase(); lookupCode(this.value)" />
+    <button class="clear-btn" onclick="document.getElementById('codeInput').value=''; clearResult()">Цэвэрлэх</button>
+  </div>
+
+  <div id="errorMsg" class="error hidden"></div>
+
+  <div id="result" class="hidden">
+    <div class="result-card">
+      <div class="result-label">Таны Холланд Код</div>
+      <div id="codeDisplay" class="result-code"></div>
+      <div id="codeNames" class="result-names"></div>
+      <div id="codeSummary" class="result-summary"></div>
+    </div>
+    <div id="letterCards"></div>
+    <div class="careers-section">
+      <div class="careers-label">Тохирох мэргэжлүүд:</div>
+      <div id="careers" class="careers-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const types = {
+  R: {
+    name: "Бодит (Realistic)",
+    color: "#2d6a0a", bg: "#e8f5d8",
+    desc: "Гар ажилладаг, машин механизм, байгальтай ажиллахад дуртай. Практик сэтгэлгээтэй, бие махбодийн ажил хийхийг илүүд үздэг.",
+    careers: ["Инженер", "Техникч", "Барилгачин", "Тариаланч", "Жолооч", "Цэрэг", "Механик"]
+  },
+  I: {
+    name: "Судалгааны (Investigative)",
+    color: "#1a5fa0", bg: "#dceeff",
+    desc: "Шинжлэх ухаан, математик, судалгаанд сонирхолтой. Асуудлыг аналитик аргаар шийддэг, мэдлэг эрэлхийлдэг.",
+    careers: ["Эрдэмтэн", "Эмч", "Математикч", "Программист", "Судлаач", "Химич", "Биологич"]
+  },
+  A: {
+    name: "Уран бүтээлч (Artistic)",
+    color: "#8c2251", bg: "#fde8f0",
+    desc: "Урлаг, бүтээлч ажилд дуртай. Чөлөөт илэрхийлэл, гоо зүйн мэдрэмжтэй, уламжлалт дүрмийг эсэргүүцдэг.",
+    careers: ["Зурагч", "Дизайнер", "Жүжигчин", "Зохиолч", "Хөгжимчин", "Архитектор", "Кино найруулагч"]
+  },
+  S: {
+    name: "Нийгмийн (Social)",
+    color: "#4a3aaa", bg: "#eceafd",
+    desc: "Хүмүүстэй харилцах, тусламж үзүүлэхэд дуртай. Эмпати өндөртэй, бусдыг сургаж, хөгжүүлэхэд таашаал авдаг.",
+    careers: ["Багш", "Нийгмийн ажилтан", "Сэтгэлзүйч", "Сувилагч", "Сургагч", "Зөвлөх", "HR менежер"]
+  },
+  E: {
+    name: "Бизнесийн (Enterprising)",
+    color: "#7a4008", bg: "#faeada",
+    desc: "Удирдах, итгүүлэх, бизнес эрхлэхэд чадвартай. Амбицтай, эрсдэл гаргахад бэлэн, хүмүүсийг манлайлдаг.",
+    careers: ["Менежер", "Бизнесмен", "Улс төрч", "Борлуулагч", "Адвокат", "Ахлагч", "Маркетер"]
+  },
+  C: {
+    name: "Дэг журмын (Conventional)",
+    color: "#2e2488", bg: "#eceafd",
+    desc: "Дэг журам, нарийн ширийн зүйлд анхааралтай. Системтэй ажиллах, өгөгдлийг зохицуулахад чадвартай.",
+    careers: ["Нягтлан", "Нарийн бичгийн дарга", "Банкир", "Статистикч", "Архивч", "Захиргааны ажилтан", "Санхүүч"]
+  }
+};
+
+function getSummary(code) {
+  const letters = code.split('');
+  const names = letters.map(l => types[l].name.split(' ')[0]);
+  return `Таны хослол бол ${code} — ${names.join(', ')} төрлүүдийн нэгдэл. Эдгээр шинж чанаруудыг хослуулсан мэргэжил сонговол хамгийн их амжилтад хүрэх боломжтой.`;
+}
+
+function lookupCode(val) {
+  const err = document.getElementById('errorMsg');
+  const res = document.getElementById('result');
+  if (val.length < 3) { res.classList.add('hidden'); err.classList.add('hidden'); return; }
+
+  const letters = val.toUpperCase().split('');
+  const invalid = letters.filter(l => !types[l]);
+  if (invalid.length > 0) {
+    err.textContent = '"' + invalid.join(', ') + '" үсэг RIASEC-д байхгүй. Зөвхөн R, I, A, S, E, C үсэг ашиглана уу.';
+    err.classList.remove('hidden'); res.classList.add('hidden'); return;
+  }
+  if (new Set(letters).size < 3) {
+    err.textContent = 'Гурван өөр үсэг оруулна уу.';
+    err.classList.remove('hidden'); res.classList.add('hidden'); return;
+  }
+
+  err.classList.add('hidden');
+  res.classList.remove('hidden');
+
+  document.getElementById('codeDisplay').textContent = val;
+  document.getElementById('codeNames').textContent = letters.map(l => types[l].name.split(' ')[0]).join(' · ');
+  document.getElementById('codeSummary').textContent = getSummary(val);
+
+  const cards = document.getElementById('letterCards');
+  cards.innerHTML = '';
+  const ranks = ['1-р байр 🥇', '2-р байр 🥈', '3-р байр 🥉'];
+  letters.forEach((l, i) => {
+    const t = types[l];
+    cards.innerHTML += `<div class="letter-card">
+      <div class="letter-badge" style="background:${t.bg}; color:${t.color};">${l}</div>
+      <div class="letter-card-right">
+        <div class="letter-card-top">
+          <span class="letter-name">${t.name}</span>
+          <span class="rank-badge">${ranks[i]}</span>
+        </div>
+        <p class="letter-desc">${t.desc}</p>
+      </div>
+    </div>`;
+  });
+
+  const allCareers = [...new Set(letters.flatMap(l => types[l].careers))];
+  document.getElementById('careers').innerHTML = allCareers.map(c =>
+    `<span class="career-tag">${c}</span>`).join('');
+}
+
+function clearResult() {
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('errorMsg').classList.add('hidden');
+}
+</script>
+</body>
+</html>
